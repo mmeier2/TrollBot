@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title id="title">{{ title }}</title>
+<link type="text/css" rel="stylesheet" href="static/chat_bot.css" />
+</head>
+
+<div id="wrapper">
+    <div id="menu">
+        <p class="welcome">Welcome to {{ title }}<b></b></p>
+        <p class="logout"><a id="exit" href="#">Exit Chat</a></p>
+        <div style="clear:both"></div>
+    </div>
+    
+    <div id="chatbox"></div>
+    
+    <form name="message" action="" id="chatform">
+        <input name="usermsg" type="text" id="usermsg" size="63" />
+        <input name="submitmsg" type="button"  id="submitmsg" value="Send" />
+    </form>
+</div>
+<script type="text/javascript" src="static/jquery-1.3.2.min.js"></script>
+<script type="text/javascript">
+// jQuery Document
+$(document).ready(function(){
+    
+});
+
+    $("#submitmsg").click(function(){
+        get_message();
+    })
+
+    $('#chatform').submit(function() {
+        get_message();
+    });
+
+    $(document).keypress(
+    function(event){
+     if (event.which == '13') {
+        event.preventDefault();
+        get_message()
+      }
+    });
+
+    $("#exit").click(function()
+    {
+        window.location.href = "/";
+    })
+
+
+
+ function get_time(){
+    var date = new Date()
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+
+    return strTime
+ }
+
+ function get_message(){
+            var clientmessage = $('#usermsg').val();
+        
+
+        $("#chatbox").append("<p><b>("+ get_time()+ ") Me:</b> " + clientmessage +"</p>")
+        var url = '/{{ name }}'
+        $.ajax({
+            url: url,
+            data: { text: $("#usermsg").val()},
+            type: 'POST',
+            success: function(response) {
+            $("#chatbox").append("<p><b>("+ get_time() + ") {{ title }}:</b> " + response +"</p>")
+        }
+        })
+
+        $("#usermsg").attr("value", "");
+        return false;
+ }
+</script>
+</body>
+</html>
